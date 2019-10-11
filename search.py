@@ -38,18 +38,9 @@ class Neighborhood():
         if a is None:
             # only use one rotation, that one of the search ellipses
             self.a = np.ones([1,3]) # 1 unit search ellipse
-            self.ai = np.ones(self.a.shape)
-            self.ai[:,0] = self.a[:,0]/self.a[:,0] #to make sure is one
-            self.ai[:,1] = self.a[:,1]/self.a[:,0]
-            self.ai[:,2] = self.a[:,2]/self.a[:,0]
-
         else:
             assert np.array(a).shape[1] == 3
             self.a = np.array(a)
-            self.ai = np.ones(self.a.shape)
-            self.ai[:,0] = self.a[:,0]/self.a[:,0] #to make sure is one
-            self.ai[:,1] = self.a[:,1]/self.a[:,0]
-            self.ai[:,2] = self.a[:,2]/self.a[:,0]
 
         # set the pibot point
         if pivot is None:
@@ -103,8 +94,8 @@ class Neighborhood():
 
         # rescale
         self.xi= X2
-        self.yi= Y2/self.ai[0,1] # first row is for search ellipse
-        self.zi= Z2/self.ai[0,2]
+        self.yi= Y2/(self.a[0,1]/self.a[0,0]) # first row is for search ellipse
+        self.zi= Z2/(self.a[0,2]/self.a[0,0])
 
 
     def update(self,t0):
@@ -130,8 +121,8 @@ class Neighborhood():
 
         # rescale
         self.x0i= X2
-        self.y0i= Y2/self.ai[0,1]
-        self.z0i= Z2/self.ai[0,2]
+        self.y0i= Y2/(self.a[0,1]/self.a[0,0])
+        self.z0i= Z2/(self.a[0,2]/self.a[0,0])
 
         # test
         self.sqdisti = (self.xi - self.x0i)**2 + (self.yi - self.y0i)**2 + (self.zi - self.z0i)**2
