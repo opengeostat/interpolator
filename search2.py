@@ -50,13 +50,14 @@ class Neighborhood():
     TODO:
     """
 
-    def __init__(self,x,y,z, a= None, pivot = None, rot=None,test=None):
+    def __init__(self,x,y,z,v = None, vname = None, vmeta = None, a= None, pivot = None, rot=None,test=None):
 
         # set data
         assert np.array(x).ndim == 1
         assert np.array(y).ndim == 1
         assert np.array(z).ndim == 1
         assert np.array(x).shape==np.array(y).shape==np.array(z).shape
+
         self.x = np.array(x)
         self.y = np.array(y)
         self.z = np.array(z)
@@ -73,6 +74,18 @@ class Neighborhood():
         self.x0i = None
         self.y0i = None
         self.z0i = None
+
+        # variables 
+        self.v = {}
+        self.vmeta = {}
+        if v is not None:
+            assert np.array(x).shape[0] == np.array(v).shape[0]
+            for i in range(np.array(v).shape[1]):
+                self.v[vname[i]] = v[:,i]
+                if vmeta is not None:
+                    self.vmeta[vname[i]] = vmeta[i]
+                else:
+                    self.vmeta[vname[i]] = None
 
         # set the serach elipse and variogram rotations-ranges as an array
         if a is None:
