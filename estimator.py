@@ -41,9 +41,9 @@ class Estimator():
         def f(i):
             self.search.update([self.x0[i],self.y0[i],self.z0[i]])
             if debug:
-                pass
+                return np.sum(self.search.test), self.search.row_id[self.search.test]
             else:
-                return np.sum(self.search.test)
+                return np.sum(self.search.test), None
             
         
         # apply the estimator to each target
