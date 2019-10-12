@@ -18,6 +18,7 @@ class Estimator():
         self.z0 = np.array(z0)
         
         self.n0 = self.x0.shape[0]
+        self.nodes = np.arange(self.n0)
         
         #set search (a class Neighborhood instance containing search data and parameters)
         self.search = search
@@ -25,19 +26,25 @@ class Estimator():
         # we save results in a dictionary
         self.estimates = {}
         
-    def mean(self, name = 'e1' , meta = 'count'):
+    def mean(self, name = 'e1' , meta = 'count', target = None, debug = True):
         """
-        count numver of points
+        count number of points
         """
         self.estimates[name] = {}
         self.estimates[name]['vname'] = None
         self.estimates[name][meta] = meta
         
+        if nodes is None:
+            nodes = self.nodes
+
+
         def f(i):
             self.search.update([self.x0[i],self.y0[i],self.z0[i]])
-            return np.sum(self.search.test)
+            if debug:
+                pass
+            else:
+                return np.sum(self.search.test)
             
         
         # apply the estimator to each target
-        self.estimates[name]['estimate'] = np.array(list(map(f,np.arange(self.n0))))
-        
+        self.estimates[name]['estimate'] = np.array(list(map(f,nodes)))
