@@ -1,4 +1,6 @@
 import numpy as np
+from pathos.pools import ProcessPool
+
 
 class Estimator():
     """
@@ -26,7 +28,7 @@ class Estimator():
         # we save results in a dictionary
         self.estimates = {}
 
-    def count(self, name = 'e1' , meta = 'count', nodes = None, debug = False):
+    def count(self, name = 'e1' , meta = 'count', nodes = None, debug = False, parallel = False):
         """
         count number of points in the neighborhood
         """
@@ -48,14 +50,19 @@ class Estimator():
 
 
         # apply the estimator to each target
-        self.estimates[name]['estimate'] = np.array(list(map(f,nodes)))
-        
-        
-    def id_power(self, name = 'e1' , meta = 'id^p estimate', nodes = None, power = 2, isotropic = True, debug = False):
+        if parallel:
+            pool = ProcessPool()
+            self.estimates[name]['estimate'] = np.array(pool.map(f,nodes))
+        else:
+            self.estimates[name]['estimate'] = np.array(list(map(f,nodes)))
+
+
+    def id_power(self, name = 'e1' , meta = 'id^p estimate', nodes = None,
+                 power = 2, isotropic = True, debug = False, parallel = False):
         """
         ID power estimate
         """
-        
+
         self.estimates[name] = {}
         self.estimates[name]['vname'] = list(self.search.v.keys())
         self.estimates[name]['meta'] = meta
@@ -67,7 +74,7 @@ class Estimator():
         def f(i):
             # update data selected around target point
             self.search.update([self.x0[i],self.y0[i],self.z0[i]])
-            
+
             # get distance
             if isotropic:
                 d = self.search.get_distances(0)
@@ -78,13 +85,16 @@ class Estimator():
             r = []
             for k in self.search.v.keys():
                 r.append(np.sum(self.search.v[k][self.search.test]*d,axis = 0)/np.sum(d))
-            
-            if debug: 
-                return r + [d] + [self.search.row_id[self.search.test]]
+
+            if debug:
+                return r + [d]  + [self.search.row_id[self.search.test]]
             else:
-                return r + [None]
+                return r + [len(d)]
 
 
         # apply the estimator to each target
-        self.estimates[name]['estimate'] = np.array([f(i) for i in nodes])
-        
+        if parallel:
+            pool = ProcessPool()
+            self.estimates[name]['estimate'] = np.array(pool.map(f,nodes))
+        else:
+            self.estimates[name]['estimate'] = np.array(list(map(f,nodes)))
