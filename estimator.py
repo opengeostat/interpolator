@@ -58,7 +58,7 @@ class Estimator():
 
 
     def id_power(self, name = 'e1' , meta = 'id^p estimate', nodes = None,
-                 power = 2, isotropic = True, debug = False, parallel = False):
+                 power = 2, isotropic = None, debug = False, parallel = False):
         """
         ID power estimate
         """
@@ -76,10 +76,7 @@ class Estimator():
             self.search.update([self.x0[i],self.y0[i],self.z0[i]])
 
             # get distance
-            if isotropic:
-                d = self.search.get_distances(0)**power
-            else:
-                d = self.search.get_distances()**power
+            d = self.search.get_distances(isotropic)**power
 
             # estimate for each variable
             r = []
