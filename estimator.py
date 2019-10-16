@@ -77,9 +77,9 @@ class Estimator():
 
             # get distance
             if isotropic:
-                d = self.search.get_distances(0)
-            else:
                 d = self.search.get_distances(0)**power
+            else:
+                d = self.search.get_distances()**power
 
             # estimate for each variable
             r = []
